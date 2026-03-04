@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-box {
+      background: white;
+      padding: 20px;
+      margin: 10px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .success { border-left: 4px solid #10b981; }
+    .error { border-left: 4px solid #ef4444; }
+    button {
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background: #764ba2; }
+    pre {
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Attendance Display Test</h1>
+
+  <div class="test-box">
+    <h3>Server Status</h3>
+    <button onclick="testHealth()">Test Health Endpoint</button>
+    <pre id="healthResult">Click button to test...</pre>
+  </div>
+
+  <div class="test-box">
+    <h3>Sync Teachers</h3>
+    <label>Date: <input type="date" id="syncDate" value="2025-10-23"></label>
+    <button onclick="testSync()">Sync Teachers</button>
+    <pre id="syncResult">Click button to test...</pre>
+  </div>
+
+  <div class="test-box">
+    <h3>Get Attendance</h3>
+    <label>Date: <input type="date" id="attendanceDate" value="2025-10-23"></label>
+    <button onclick="testGetAttendance()">Get Attendance</button>
+    <pre id="attendanceResult">Click button to test...</pre>
+  </div>
+
+  <div class="test-box">
+    <h3>Get Stats</h3>
+    <label>Date: <input type="date" id="statsDate" value="2025-10-23"></label>
+    <button onclick="testGetStats()">Get Stats</button>
+    <pre id="statsResult">Click button to test...</pre>
+  </div>
+
+  <div class="test-box">
+    <h3>Toggle Teacher</h3>
+    <label>Teacher: <input type="text" id="teacherName" value="Ada"></label>
+    <label>Date: <input type="date" id="toggleDate" value="2025-10-23"></label>
+    <button onclick="testToggle()">Toggle Status</button>
+    <pre id="toggleResult">Click button to test...</pre>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:5556/api';
+
+    async function testHealth() {
+      const result = document.getElementById('healthResult');
+      try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        result.parentElement.className = 'test-box success';
+      } catch (error) {
+        result.textContent = 'ERROR: ' + error.message;
+        result.parentElement.className = 'test-box error';
+      }
+    }
+
+    async function testSync() {
+      const result = document.getElementById('syncResult');
+      const date = document.getElementById('syncDate').value;
+      try {
+        const response = await fetch(`${API_BASE_URL}/attendance/sync`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date })
+        });
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        result.parentElement.className = 'test-box success';
+      } catch (error) {
+        result.textContent = 'ERROR: ' + error.message;
+        result.parentElement.className = 'test-box error';
+      }
+    }
+
+    async function testGetAttendance() {
+      const result = document.getElementById('attendanceResult');
+      const date = document.getElementById('attendanceDate').value;
+      try {
+        const response = await fetch(`${API_BASE_URL}/attendance?date=${date}`);
+        const data = await response.json();
+        result.textContent = JSON.stringify(data.slice(0, 3), null, 2) + '\n...(showing first 3 of ' + data.length + ')';
+        result.parentElement.className = 'test-box success';
+      } catch (error) {
+        result.textContent = 'ERROR: ' + error.message;
+        result.parentElement.className = 'test-box error';
+      }
+    }
+
+    async function testGetStats() {
+      const result = document.getElementById('statsResult');
+      const date = document.getElementById('statsDate').value;
+      try {
+        const response = await fetch(`${API_BASE_URL}/attendance/stats?date=${date}`);
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        result.parentElement.className = 'test-box success';
+      } catch (error) {
+        result.textContent = 'ERROR: ' + error.message;
+        result.parentElement.className = 'test-box error';
+      }
+    }
+
+    async function testToggle() {
+      const result = document.getElementById('toggleResult');
+      const teacherName = document.getElementById('teacherName').value;
+      const date = document.getElementById('toggleDate').value;
+      try {
+        const response = await fetch(`${API_BASE_URL}/attendance/toggle`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ teacher_name: teacherName, date })
+        });
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        result.parentElement.className = 'test-box success';
+      } catch (error) {
+        result.textContent = 'ERROR: ' + error.message;
+        result.parentElement.className = 'test-box error';
+      }
+    }
+
+    // Auto-run health check on load
+    window.addEventListener('load', testHealth);
+  </script>
+</body>
+</html>

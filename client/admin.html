@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Admin Panel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-warning {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-box {
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-box.present {
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      border: 2px solid #10b981;
+    }
+
+    .stat-box.absent {
+      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+      border: 2px solid #ef4444;
+    }
+
+    .stat-box.away {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid #f59e0b;
+    }
+
+    .stat-box.total {
+      background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+      border: 2px solid #6366f1;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #333;
+    }
+
+    .teachers-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .teachers-table th,
+    .teachers-table td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .teachers-table th {
+      background: #f3f4f6;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    .teachers-table tr:hover {
+      background: #f9fafb;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .status-badge.present {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-badge.absent {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-badge.away {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.875rem;
+    }
+
+    .message {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    .message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📋 Attendance Admin Panel</h1>
+    <p class="subtitle">Manage teacher attendance for today</p>
+
+    <div id="message" class="message"></div>
+
+    <div class="actions">
+      <button class="btn-primary" onclick="syncAttendance()">🔄 Sync Today's Teachers</button>
+      <button class="btn-success" onclick="openDisplay()">📺 Open Display</button>
+      <button class="btn-danger" onclick="loadAttendance()">↻ Refresh Data</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box present">
+        <div class="stat-number" id="presentCount">0</div>
+        <div class="stat-label">Present</div>
+      </div>
+      <div class="stat-box absent">
+        <div class="stat-number" id="absentCount">0</div>
+        <div class="stat-label">Not Yet Here</div>
+      </div>
+      <div class="stat-box away">
+        <div class="stat-number" id="awayCount">0</div>
+        <div class="stat-label">Already Left</div>
+      </div>
+      <div class="stat-box total">
+        <div class="stat-number" id="totalCount">0</div>
+        <div class="stat-label">Total</div>
+      </div>
+    </div>
+
+    <table class="teachers-table">
+      <thead>
+        <tr>
+          <th>Teacher Name</th>
+          <th>Status</th>
+          <th>Check In Time</th>
+          <th>Check Out Time</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="teachersTable">
+        <tr>
+          <td colspan="5" style="text-align: center; color: #999;">Loading...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:5556/api';
+
+    async function loadAttendance() {
+      try {
+        const [attendanceRes, statsRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/attendance`),
+          fetch(`${API_BASE_URL}/attendance/stats`)
+        ]);
+
+        const attendance = await attendanceRes.json();
+        const stats = await statsRes.json();
+
+        // Update stats
+        document.getElementById('presentCount').textContent = stats.checked_in || 0;
+        document.getElementById('absentCount').textContent = stats.absent || 0;
+        document.getElementById('awayCount').textContent = stats.checked_out || 0;
+        document.getElementById('totalCount').textContent = stats.total || 0;
+
+        // Update table
+        const tbody = document.getElementById('teachersTable');
+        if (attendance.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">No teachers scheduled for today. Click "Sync Today\'s Teachers" to load.</td></tr>';
+        } else {
+          tbody.innerHTML = attendance.map(teacher => `
+            <tr>
+              <td><strong>${teacher.teacher_name}</strong></td>
+              <td><span class="status-badge ${teacher.status}">${formatStatus(teacher.status)}</span></td>
+              <td>${teacher.check_in_time ? formatTime(teacher.check_in_time) : '-'}</td>
+              <td>${teacher.check_out_time ? formatTime(teacher.check_out_time) : '-'}</td>
+              <td>
+                <div class="action-buttons">
+                  ${teacher.status !== 'checked_in' ? `<button class="btn-success btn-sm" onclick="checkIn('${teacher.teacher_name}')">Check In</button>` : ''}
+                  ${teacher.status === 'checked_in' ? `<button class="btn-warning btn-sm" onclick="checkOut('${teacher.teacher_name}')">Check Out</button>` : ''}
+                </div>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (error) {
+        showMessage('Failed to load attendance data', 'error');
+        console.error(error);
+      }
+    }
+
+    async function syncAttendance() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/attendance/sync`, {
+          method: 'POST'
+        });
+        const data = await response.json();
+        showMessage(`Synced ${data.count} teachers successfully`, 'success');
+        await loadAttendance();
+      } catch (error) {
+        showMessage('Failed to sync attendance', 'error');
+        console.error(error);
+      }
+    }
+
+    async function checkIn(teacherName) {
+      try {
+        await fetch(`${API_BASE_URL}/attendance/check-in`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ teacher_name: teacherName })
+        });
+        showMessage(`${teacherName} checked in`, 'success');
+        await loadAttendance();
+      } catch (error) {
+        showMessage('Failed to check in teacher', 'error');
+        console.error(error);
+      }
+    }
+
+    async function checkOut(teacherName) {
+      try {
+        await fetch(`${API_BASE_URL}/attendance/check-out`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ teacher_name: teacherName })
+        });
+        showMessage(`${teacherName} checked out`, 'success');
+        await loadAttendance();
+      } catch (error) {
+        showMessage('Failed to check out teacher', 'error');
+        console.error(error);
+      }
+    }
+
+    function openDisplay() {
+      window.open('index.html', '_blank');
+    }
+
+    function formatStatus(status) {
+      const map = {
+        'checked_in': 'Present',
+        'absent': 'Not Yet Here',
+        'checked_out': 'Already Left'
+      };
+      return map[status] || status;
+    }
+
+    function formatTime(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    }
+
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = `message ${type} show`;
+      setTimeout(() => {
+        msg.classList.remove('show');
+      }, 5000);
+    }
+
+    // Load data on page load
+    loadAttendance();
+
+    // Auto-refresh every 30 seconds
+    setInterval(loadAttendance, 30000);
+  </script>
+</body>
+</html>

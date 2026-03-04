@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to ICAN Academy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Main Split Layout -->
+    <div class="split-layout">
+      <!-- Left Side: Widgets -->
+      <aside class="widgets-panel">
+        <!-- Large Clock Widget with Welcome -->
+        <div class="widget clock-widget">
+          <div class="welcome-section">
+            <h1 class="welcome-title">Welcome to ICAN Academy</h1>
+            <p class="welcome-subtitle">In ICAN, we can!</p>
+          </div>
+          <div id="widgetTime" class="widget-time"></div>
+          <div id="widgetDate" class="widget-date"></div>
+          <div id="holidayLine" class="holiday-line">📅 Regular day</div>
+        </div>
+
+        <!-- Weather Widget -->
+        <div class="widget weather-widget">
+          <div class="weather-icon" id="weatherIcon">☀️</div>
+          <div class="weather-info">
+            <div class="weather-temp" id="weatherTemp">--°C</div>
+            <div class="weather-desc" id="weatherDesc">Loading weather...</div>
+            <div class="weather-location">Pasig City, Philippines</div>
+          </div>
+          <div class="uv-info">
+            <div class="uv-label">UV Index</div>
+            <div class="uv-value" id="uvIndex">--</div>
+            <div class="uv-status" id="uvStatus">--</div>
+          </div>
+        </div>
+
+        <!-- Word of the Day Widget -->
+        <div class="widget word-widget">
+          <div class="widget-label">Word of the Day</div>
+          <div class="word-main" id="wordOfDay">Loading...</div>
+          <div class="word-pos" id="wordPos">noun</div>
+          <div class="word-meaning" id="wordMeaning">Loading definition...</div>
+        </div>
+
+        <!-- AI Mascot Widget -->
+        <div class="widget mascot-widget">
+          <div class="mascot-character">🤖</div>
+          <div class="speech-bubble">
+            <div id="mascotMessage">Good morning! Have a great day!</div>
+          </div>
+        </div>
+
+        <!-- Daily Quote Widget -->
+        <div class="widget quote-widget">
+          <div class="quote-icon">💭</div>
+          <div id="dailyQuote" class="quote-text">Loading inspiration...</div>
+        </div>
+
+        <!-- QR Code Widget -->
+        <div class="widget qr-widget">
+          <div class="widget-label">🌐 Visit ICAN Academy</div>
+          <div class="qr-code-container">
+            <img id="qrCode" src="" alt="QR Code" class="qr-code-image">
+          </div>
+          <div class="qr-instruction">Scan to visit our website</div>
+        </div>
+      </aside>
+
+      <!-- Main: Unified Attendance Timeline -->
+      <main class="attendance-panel">
+
+        <!-- UNIFIED ATTENDANCE SECTION -->
+        <div class="attendance-category">
+          <h2 class="category-title">🚀 DR. ICAN COSMIC AGENT TRACKER</h2>
+          <div class="timeslots-grid">
+            <!-- Dynamically populated by JavaScript -->
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="status-legend">
+        <span class="legend-item">
+          <span class="legend-dot status-teacher-present"></span>
+          <span class="legend-text">Teacher Present</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-dot status-student-present"></span>
+          <span class="legend-text">Student Present</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-dot status-late"></span>
+          <span class="legend-text">Late</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-dot status-absent"></span>
+          <span class="legend-text">Absent</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-dot status-unmarked"></span>
+          <span class="legend-text">Unmarked (Blinking)</span>
+        </span>
+        <span class="legend-item">
+          <span class="legend-dot status-waiting"></span>
+          <span class="legend-text">Not Yet Started</span>
+        </span>
+      </div>
+      <div class="refresh-indicator">
+        <span id="lastUpdate">Last updated: --:--</span>
+        <span class="pulse"></span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Fullscreen Button -->
+  <button id="fullscreenBtn" class="fullscreen-btn" title="Enter Fullscreen (F)">⛶</button>
+
+  <script src="app.js"></script>
+</body>
+</html>
